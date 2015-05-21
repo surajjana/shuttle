@@ -5,8 +5,6 @@
  */
 
 
-
-
 #include<iostream>
 #include<GL/glut.h>            // OpenGL Graphics Utility Library
 #include <GL/glu.h>
@@ -14,6 +12,7 @@
 #include <stdio.h>
 
 using namespace std;
+
 float tx=0,ty=0,tz=0, Trans_y=0, alpha=0, T_z=200, z_viewvol= -120, saturn_tx=0;
 unsigned char mainkey='s';       // Controls Main Project in display function, default value: s: for start
 
@@ -42,9 +41,7 @@ GLfloat spe2[]= {80};			            //Property for front and back
 GLfloat theta=0,dt=0.7, axes[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
 int axis = 0; 					         	//0:x, 1:Y, 2:Z, 3:light aroundz
 
-/* You must have seen the Orange color tank on which shuttle hangs when the shuttle launches,
- * this function builds that Orange Tank.
- */
+
 void shuttle_main_tank(){
 	glPushMatrix ();
 	   maintank = gluNewQuadric();
@@ -78,33 +75,6 @@ void shuttle_main_tank(){
 	glPopMatrix();
 }
 
-/* This function builds both wings of shuttle.
- */
-
-void shuttle_plate(){                // Shuttle Plate == Shuttle Wings.....Wings make in 3 sections
-	glColor3f(1, 1, 1);
-	for(int i=0; i<3; i++){         // ShuttlePlates: 0: Top Plate, 1: Middle Plate, 2: Bottom Plate
-	  glPushMatrix ();
-	      glTranslated(6.7, Shuttle_Plates[i][0], 6+z_viewvol);
-	      glScalef(5, Shuttle_Plates[i][1], 0);
-	      glRotated(-90, 1, 0, 0);
-	      gluCylinder(shuttle, Shuttle_Plates[i][2], Shuttle_Plates[i][3], 1, 32, 32);
-	   glPopMatrix();
-	}
-
-	glColor3f(0.2, 0.2, 0.2);
-	//  For all Black Strips on Shuttle around wings // 0:LeftStripTopWing, 1:RightStripTopWing, 2:LeftStripMiddleWing, 3:RightStripMiddleWing,
-	//  4:LeftStripBottomWing, 5:RightStripBottomWing, 6:HorizontalBottomStripBottomWing
-    for(int i=0; i<7; i++){
-		glPushMatrix ();
-	        glTranslated(BlackStripPlate[i][0], BlackStripPlate[i][1], 6+z_viewvol);
-	        glRotated(-90, 1, 0, 0);
-	        glRotated(BlackStripPlate[i][2], 0, 1, 0);
-	        gluCylinder(shuttle, 0.2, 0.2, BlackStripPlate[i][3], 32, 32);               // Cylindrical Black strip along wings
-	    glPopMatrix();
-     } // for Loop Ends here
- }
-
 float random(int min, int max){            // random function: self defined....needed to throw flames
 
    again: int i=(rand()%100)/10;
@@ -129,9 +99,6 @@ float random2(int min, int max){                // needed to throw flames
   else
 	 goto again;
 }
-
-/*  This function gives the effect of fire, when the shuttle launches
- */
 
 void fire(int j){
 
@@ -166,144 +133,6 @@ void fire(int j){
 	glPopMatrix();
 }
 
-/*  This function builds the tail of shuttle
- */
-void shuttleTail(){
-	glColor3f(0.4, 0.4, 0.4);
-  	glPushMatrix ();
-       glTranslated(6.7, -11, 10+z_viewvol);
-       glRotated(50, 1, 0, 0);
-	   glScalef(1, 4, 7);
-	   gluCylinder(shuttle, 0.8, 0.5, 1, 32, 32);
-	glPopMatrix();
-
-	glPushMatrix ();                     // Tail...help
-       glTranslated(6.7, -16.5, 13.3+z_viewvol);
-       glScalef(1, 4, 2.5);
-	   gluCylinder(shuttle, 0.3, 0.5, 1, 32, 32);
-	glPopMatrix();
-
-	glPushMatrix ();                     // Tail...help
-	   glTranslated(6.7, -15.30, 14+z_viewvol);
-       glRotated(90, 1, 0, 0);
-	   glScalef(1, 4, 2.5);
-	   gluCylinder(shuttle, 0.3, 0.3, 1, 32, 32);                  // Main cylinder of shuttle...white color...completes main cylinder
-	glPopMatrix();
-}
-/*  This function builds the exhaust of shuttle
- */
-
-void shuttle_exhaust(){                    // Use 7 cylindrical rings and 2 cones for each exhaust(Silencer) of Shuttle
-  float r=1, T_y=-16, height;
-  float exhaust[3][2] = { {6.7, 12}, {5, 7}, {9, 7} };             // {T_x, T_y}
-
-  for(int j=0; j<3; j++){
-	  glColor3f(0, 0, 0);
-	  r=1;
-	  T_y = -16;
-
-	  for(int i=0; i<7; i++){
-	      glPushMatrix ();                                // for shuttle exhaust
-	        glTranslated(exhaust[j][0], T_y, exhaust[j][1]+z_viewvol);
-            glRotated(-90, 1, 0, 0);                      // Rotation.....must for cylinders
-	        gluCylinder(shuttle, r, r, 0.40, 32, 32);                  // Main cylinder of shuttle...white color...completes main cylinder
-	      glPopMatrix();
-	      T_y = T_y - 0.5;
-	      r= r+0.15;
-      }
-   	  height=0;
-      glColor3f(0.3, 0.3, 0.3);
-
-	  for(int i=0; i<2; i++)  {
-	    glPushMatrix ();                                // for shuttle exhaust
-	       glTranslated(exhaust[j][0], T_y, exhaust[j][1]+z_viewvol);
-           glRotated(-90, 1, 0, 0);                      // Rotation.....must for cylinders
-	       height = -T_y -16;
-	       glutSolidCone(r, height, 32,32);                  // One Cone in the exhaust ring
-   	    glPopMatrix();
-
-	    glColor3f(.92,0.75,0.05);
-	    T_y = T_y -0.2;
-      }
-   }// Main for loop ends here
-}
-/*  This function builds the main cylndrical body of space shuttle
- */
-
-void shuttle_Discovery(){
-       glTranslated(0, -3, 0);
-	   shuttle = gluNewQuadric();
-       gluQuadricDrawStyle(shuttle, GLU_FILL);
-       gluQuadricNormals(shuttle, GLU_SMOOTH);
-       gluQuadricOrientation(shuttle, GLU_OUTSIDE);
-
-	   glColor3f(0, 0, 0);
-       glPushMatrix ();                                // for hemispherical topmost front of shuttle...
- 	      glTranslated(6.7, 13.5, 9+z_viewvol);
-          glutSolidSphere(1.4, 32, 32);
-	   glPopMatrix();
-
-	   glColor3f(0.7, 0.7, 0.7);
-       glPushMatrix ();                               // for front curve of shuttle...where we have windscreen and stuff
- 	      glTranslated(6.7, 7, 9+z_viewvol);
-          glRotated(-90, 1, 0, 0);
-	      gluCylinder(shuttle, 3.2, 1.4, 6.5, 32, 32);
-	   glPopMatrix();
-
-	   glColor3f(0.3, 0.3, 0.3);                  // Color for Windscreen
-	   // 0: middle windscreen, 1: left windscreen, 2: right windscreen {T_x, T_y, T_z, R_y}  R_y: Rotation along y-axis
-	   float windscreens[3][4] = { {6.7, 9, 10.9, 0}, {5.3, 8.4, 10.7, 1}, {8, 8.4, 10.7, -1} };
-
-	   for(int i=0; i<3; i++){
-	      glPushMatrix ();                     // for front windscreen middle
-             glTranslated(windscreens[i][0], windscreens[i][1], windscreens[i][2]+z_viewvol);
-             glRotated(45, 1, windscreens[i][3], 0);              // Rotation.....must for cylinders
-	         gluCylinder(shuttle, 1, 0.5, 1, 32, 32);
-	       glPopMatrix();
-       }
-
-    glColor3f(0.7, 0.7, 0.7);
-    glPushMatrix ();                         // Main Cylindrical Body of Shuttle
-	   glTranslated(6.7, -12, 9+z_viewvol);
-       glRotated(-90, 1, 0, 0);
-	   gluCylinder(shuttle, 3.2, 3.2, 19, 32, 32);     // Main cylinder of Shuttle
-	glPopMatrix();
-
-	glColor3f(0, 0, 0);                   // Color for Windows
-	int windowsY[5]={3, 0, -3, -6, -9};                 // Window pipes in horizontal direction.... 5 Windows in Shuttle
-	for(int i=0; i<5; i++){
-	  glPushMatrix ();                     // Cubic Windows
-	     glTranslated(6.7, windowsY[i], 10+z_viewvol);       // change 6 to new value..after using cube.....
-         glScalef(6.1, 1, 1);
-	     glutSolidCube(1);
-	  glPopMatrix();
-    }
-
-	glColor3f(0.6, 0.6, 0.6);
-	// merging cylinders
-	glPushMatrix ();                     // Tail Bottom Tank...1st merging cylinder
-	   glTranslated(6.7, -15, 9+z_viewvol);
-       glRotated(-90, 1, 0, 0);
-	   gluCylinder(shuttle, 3.2, 3.2, 3, 32, 32);
-	glPopMatrix();
-
-	glPushMatrix ();                     // Tail Bottom Tank...2nd merging Cylinder
-       glTranslated(6.7, -15, 10+z_viewvol);
-       glRotated(-90, 1, 0, 0);
-	   gluCylinder(shuttle, 3.2, 3.2, 3, 32, 32);
-	glPopMatrix();
-
-    // for shuttle....exhaust....
-    shuttle_exhaust();
-    glColor3f(0.4, 0.4, 0.4);
-	shuttleTail();
-    shuttle_plate();                 // for shuttle plates and strip
-	//fire(0);
-	//fire(1);
-	//fire(2);
-}
-/*  This function builds the left solid booster of shuttle
- */
 void shuttle_leftBooster(bool callfromRight){               // left solid booster
 
    	   leftbooster = gluNewQuadric();
@@ -328,8 +157,7 @@ void shuttle_leftBooster(bool callfromRight){               // left solid booste
 
 	  fire(3);
 }
-/*  This function builds the right solid booster of shuttle
- */
+
 
 void shuttle_rightBooster(){              // right solid booster
 	glPushMatrix ();
@@ -344,45 +172,17 @@ void shuttle_main(){
 	shuttle_leftBooster(false);        // false: for not calling from right booster function...
     shuttle_rightBooster();
     shuttle_main_tank();
-  	shuttle_Discovery();
 }
 
-/*  This function gives effect of shuttle seperating from solid boosters & orange color tank
- */
-void shuttle_seperate(){
-	theta = theta-45;
-	glPushMatrix(); 				    // for left booster
-	    glRotated(theta, 1, 1, 0);
-	    shuttle_leftBooster(false);
-    glPopMatrix();
 
-	glPushMatrix(); 				    //  for right booster
-	    glRotated(theta, 1, -1, 0);
-	    shuttle_rightBooster();
-    glPopMatrix();
-
-	glPushMatrix(); 				   //for Orange main tank
-	    glRotated(theta, -1, 0, 1);
-	    shuttle_main_tank();
-   glPopMatrix();
-
-   glPushMatrix(); 				       //for shuttle
-	    glRotated(theta/3, 1, 0, 0);
-	    shuttle_Discovery();
-   glPopMatrix();
-
-   theta = theta +45;                   // Resetting theta
-
-}
-
-/*void BackGroundSphere(){
+void BackGroundSphere(){
 
   glPushMatrix();
    glColor3f(1, 1, 1);
    glTranslated(0, 0, -4000);
    glutWireSphere(4000, 12, 12);                      // Big Wire Sphere.....to give feel of order in Solar System
   glPopMatrix();
-}*/
+}
 
 void Jupiter_Moon(){
   // Array stores...{Tx, Tz} of Moons to display them near Jupiter
@@ -415,10 +215,10 @@ void AllPlanets(){                              // All planets and Sun
 void Display_Contol_Menu(){
 
 	fprintf(stdout, "Space Shuttle Project: By Spacehacker");
-    cout<<"\n\nPress 's' to Start Main Project....\nPress 'o' to see only Shuttle...\nPress 'r' to see shuttle in different view..."<<endl;
-	cout<<"Press 'd' to see shuttle only on different view along different axis...\nPress 'g' to see Solar System or Galaxy..."<<endl;
-	cout<<"Press 'p' to seperate shuttle....like what happens during its launch\nPress 'l' to see booster only\n";
-	cout<<"Press 'k' to see shuttle discovery only\nPress 'm' to see orange main tank only\n";
+    cout<<"\n\nPress 's' to Start Main Project...."<<endl;
+	cout<<"Press 'g' to see Solar System or Galaxy..."<<endl;
+	cout<<"Press 'l' to see booster only"<<endl;
+	cout<<"Press 'm' to see orange main tank only\n";
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -452,63 +252,7 @@ void display(void)
  switch(mainkey){
 
    case 's':{
-	  // Displays all Planets
-	   glPushMatrix();
-	      glTranslated(0, 0, T_z);
-	      //BackGroundSphere();
-		  AllPlanets();
-		  Jupiter_Moon();
-	   glPopMatrix();
-
-	   T_z= T_z + 10;                               // To Move along z-axis towards origin.....for moving effect
-
-	   if(theta>359 && theta < 360)                  // just for reseeting the values....when theta reaches 360
-	   {  T_z = 0;
-	      z_viewvol= -120;
-	   }
-
-	   if(theta < 46)
-	   {
-		    glPushMatrix(); 				//Preserve CTM for object
-		       glTranslated(tx, ty, 0);
-			   glTranslated(6, 0, -120);
-	           glRotated(-theta*1.3, 1, 0, 0);
-		       glTranslated(-6, 0, 120);
-		       shuttle_main();                  // Shuttle Main
-			 glPopMatrix();
-
-		}
-		else if(theta>=46 && theta < 80){
-		     glPushMatrix();
-		       glTranslated(6.7, 0, -120);
-	           glRotated(-62, 1, 0, 0); 	//rotate light around z
-		       glTranslated(-6.7, 0, 120);
-			   shuttle_seperate();            // Shuttle Seperate
-		     glPopMatrix();
-		 }
-		 else{
-		     glPushMatrix();
-
-			    glTranslated(random(-1,1)*0.05, Trans_y + random(-1,1)*0.05, random(-1,1)*0.05 );
-
-				glTranslated(6.7, 0, -120);
-	            glRotated(-48, 1, 0, 0);
-		        glTranslated(-6.7,0,120);
-
-			     glPushMatrix();
-				   glTranslated(6.7, 0, -120);
-				   glRotated(alpha, 0, 1, 0);
-	               alpha = alpha+1;                // for rotation angle...
-				   glTranslated(-6.7, 0, 120);
-
-				   shuttle_Discovery();          // Only Shuttle...no main tank...no boosters
-				   fire(1);
-				   if(T_z > 3600)
-		              z_viewvol-=0.20;
-		          glPopMatrix();
-
-		      glPopMatrix();
-		   }
+   shuttle_main();
 		   break;        // case 's': start ends here
 		 }
 
@@ -524,15 +268,11 @@ void display(void)
 	         glTranslated(-6.7, 0, 100);
 	         shuttle_main();
              break;
-   case 'g':  //BackGroundSphere();                 // case: 'g' for galaxy view...or solar system view
+   case 'g':  BackGroundSphere();                 // case: 'g' for galaxy view...or solar system view
 		      AllPlanets();
 		      Jupiter_Moon();
 		      break;
-   case 'p': shuttle_seperate();                  // case: 'p' for space shuttle seperate view
-	         break;
    case 'l': shuttle_leftBooster(false);
-	         break;
-   case 'k': shuttle_Discovery();
 	         break;
    case 'm': shuttle_main_tank();
 	         break;
@@ -556,7 +296,7 @@ int main(int argc, char **argv){
 	 glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
      glutInitWindowSize(800, 600);
      glutInitWindowPosition(200, 100);
-	 glutCreateWindow("Space Shuttle");
+	 glutCreateWindow("Space shuttle animation by Spacehacker");
      glClearColor(0, 0, 0, 0);       //sets background color (r,g,b,alpha) for the window.
 	 glEnable(GL_DEPTH_TEST);		 //To remove depth buffer
 	 glMatrixMode(GL_PROJECTION);
@@ -583,6 +323,5 @@ int main(int argc, char **argv){
      glutDisplayFunc(display);        //register display call back function
 	 glutKeyboardFunc(keyboard);
 	 glutIdleFunc(idle);
-     glutMainLoop();
-     return 0;              //enter event-processing loop, always needs this line.
+     glutMainLoop();                     //enter event-processing loop, always needs this line.
 }
