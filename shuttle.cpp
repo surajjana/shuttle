@@ -9,7 +9,7 @@
 
 #include<iostream>
 #include<GL/glut.h>            // OpenGL Graphics Utility Library
-#include <GL/glu.h>
+//#include <GL/glu.h>
 #include<math.h>
 #include <stdio.h>
 
@@ -52,7 +52,7 @@ void shuttle_main_tank(){
        gluQuadricNormals(maintank, GLU_SMOOTH);
        gluQuadricOrientation(maintank, GLU_OUTSIDE);
 
-	   glColor3f(1, 0.51, 0.04);
+	   glColor3f(1.00, 0.50, 0.00);
   	   // for Top of Main Orange Color Tank
 	   float h=0;
 	   for(float r= 4.7; r>=0; r-= 0.5){
@@ -82,7 +82,7 @@ void shuttle_main_tank(){
  */
 
 void shuttle_plate(){                // Shuttle Plate == Shuttle Wings.....Wings make in 3 sections
-	glColor3f(1, 1, 1);
+	glColor3f(1, 1,1);
 	for(int i=0; i<3; i++){         // ShuttlePlates: 0: Top Plate, 1: Middle Plate, 2: Bottom Plate
 	  glPushMatrix ();
 	      glTranslated(6.7, Shuttle_Plates[i][0], 6+z_viewvol);
